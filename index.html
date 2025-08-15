@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shon the Sound Guy - Professional Live Event Audio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #1a1a1a;
+            --accent-color: #03a9f4;
+            --dark-bg: #0d0d0d;
+            --light-text: #e0e0e0;
+            --neon-blue: #00bcd4;
+            --deep-blue: #1565c0;
+            --light-blue: #81d4fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+        }
+
+        /* Audio Visualizer Background */
+        .audio-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
+        }
+
+        .audio-bars {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            opacity: 0.1;
+        }
+
+        .bar {
+            width: 4px;
+            background: linear-gradient(to top, var(--deep-blue), var(--neon-blue), rgba(255, 107, 53, 0.5));
+            border-radius: 2px;
+            animation: audioWave 2s ease-in-out infinite;
+        }
+
+        .bar:nth-child(odd) { animation-delay: 0.1s; }
+        .bar:nth-child(even) { animation-delay: 0.3s; }
+
+        @keyframes audioWave {
+            0%, 100% { height: 20px; }
+            50% { height: 80px; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(13, 13, 13, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-color) !important;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+            position: relative;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light-text) !important;
+            font-weight: 600;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(33, 150, 243, 0.15) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .crowd-image {
+            max-height: 200px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+
+        .crowd-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(33, 150, 243, 0.4);
+            opacity: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-color), var(--neon-blue), var(--light-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(33, 150, 243, 0.4);
+            margin-bottom: 1rem;
+        }
+
+        .hero .lead {
+            font-size: 1.5rem;
+            color: var(--light-text);
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(224, 224, 224, 0.3);
+        }
+
+        .waveform {
+            position: absolute;
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 200px;
+            opacity: 0.3;
+        }
+
+        .wave-line {
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--neon-blue), rgba(255, 107, 53, 0.5));
+            margin: 8px 0;
+            border-radius: 1px;
+            animation: waveform 3s ease-in-out infinite;
+        }
+
+        .wave-line:nth-child(1) { width: 100%; animation-delay: 0s; }
+        .wave-line:nth-child(2) { width: 80%; animation-delay: 0.2s; }
+        .wave-line:nth-child(3) { width: 90%; animation-delay: 0.4s; }
+        .wave-line:nth-child(4) { width: 70%; animation-delay: 0.6s; }
+        .wave-line:nth-child(5) { width: 85%; animation-delay: 0.8s; }
+
+        @keyframes waveform {
+            0%, 100% { transform: scaleX(1); opacity: 0.3; }
+            50% { transform: scaleX(1.2); opacity: 0.8; }
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--deep-blue));
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(33, 150, 243, 0.4);
+            background: linear-gradient(45deg, var(--neon-blue), var(--primary-color));
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(13, 13, 13, 0.9) 100%);
+        }
+
+        .service-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(33, 150, 243, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 50px rgba(33, 150, 243, 0.2);
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+        }
+
+        /* Equipment Section */
+        .equipment {
+            padding: 100px 0;
+            background: var(--secondary-color);
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .equipment-item {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .equipment-item:hover {
+            background: rgba(33, 150, 243, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Portfolio Section */
+        .portfolio {
+            padding: 100px 0;
+            background: linear-gradient(45deg, var(--dark-bg) 0%, var(--secondary-color) 100%);
+        }
+
+        .portfolio-item {
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(33, 150, 243, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 100px 0;
+            background: var(--secondary-color);
+        }
+
+        .contact-form {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .form-control {
+            background: rgba(13, 13, 13, 0.8);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--light-text);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control:focus {
+            background: rgba(13, 13, 13, 0.9);
+            border-color: var(--primary-color);
+            color: var(--light-text);
+            box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            padding: 50px 0 20px;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .waveform {
+                display: none;
+            }
+        }
+
+
+/* Modal Backdrop */
+.modal-backdrop {
+    background-color: rgba(13, 13, 13, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+/* Modal Dialog */
+.modal-dialog {
+    margin: 2rem auto;
+}
+
+.modal-xl {
+    max-width: 1200px;
+}
+
+/* Modal Content */
+.modal-content {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(13, 13, 13, 0.95) 100%);
+    border: 2px solid rgba(33, 150, 243, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    color: var(--light-text);
+    overflow: hidden;
+    position: relative;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--neon-blue), var(--light-blue));
+    z-index: 1;
+}
+
+/* Modal Header */
+.modal-header {
+    background: rgba(33, 150, 243, 0.1);
+    border-bottom: 1px solid rgba(33, 150, 243, 0.2);
+    padding: 1.5rem 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.modal-title {
+    color: var(--light-text);
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+    display: flex;
+    align-items: center;
+}
+
+.modal-title i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+    font-size: 1.8rem;
+    text-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+}
+
+.btn-close {
+    filter: invert(1) brightness(1.5);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    background-size: 1.2em;
+}
+
+.btn-close:hover {
+    opacity: 1;
+    filter: invert(1) brightness(2);
+    transform: scale(1.1);
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 2rem;
+    background: transparent;
+}
+
+.modal-body h6 {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(33, 150, 243, 0.3);
+}
+
+.modal-body p {
+    color: var(--light-text);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+/* Event Stats */
+.event-stats {
+    background: rgba(33, 150, 243, 0.1);
+    border: 1px solid rgba(33, 150, 243, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    text-shadow: 0 0 15px rgba(33, 150, 243, 0.4);
+    display: block;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--light-text);
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.5rem;
+}
+
+/* Equipment Lists */
+.equipment-list {
+    background: rgba(26, 26, 26, 0.6);
+    border: 1px solid rgba(33, 150, 243, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.equipment-list:hover {
+    background: rgba(33, 150, 243, 0.1);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.equipment-list h6 {
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.equipment-list h6 i {
+    color: var(--neon-blue);
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.equipment-list ul {
+    margin: 0;
+}
+
+.equipment-list li {
+    color: var(--light-text);
+    padding: 0.3rem 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+/* Testimonial Box */
+.testimonial-box {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(0, 188, 212, 0.15) 100%);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    position: relative;
+}
+
+.testimonial-box::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    font-size: 3rem;
+    color: var(--primary-color);
+    opacity: 0.3;
+    font-family: serif;
+}
+
+.testimonial-author {
+    margin-top: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+/* Modal Gallery */
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.gallery-item {
+    background: rgba(33, 150, 243, 0.1);
+    border: 1px solid rgba(33, 150, 243, 0.2);
+    border-radius: 10px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    background: rgba(33, 150, 243, 0.2);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.gallery-item i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(33, 150, 243, 0.4);
+}
+
+/* Modal Footer */
+.modal-footer {
+    background: rgba(13, 13, 13, 0.5);
+    border-top: 1px solid rgba(33, 150, 243, 0.2);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-footer .btn-secondary {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--light-text);
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--deep-blue));
+    border: none;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-primary:hover {
+    background: linear-gradient(45deg, var(--neon-blue), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(33, 150, 243, 0.4);
+}
+
+/* List Styling */
+.modal-body ul.list-unstyled li {
+    padding: 0.5rem 0;
+    color: var(--light-text);
+    opacity: 0.9;
+}
+
+.modal-body ul.list-unstyled li i.fa-check-circle {
+    color: var(--neon-blue);
+    margin-right: 0.75rem;
+    text-shadow: 0 0 8px rgba(0, 188, 212, 0.4);
+}
+
+/* Responsive Modal Styling */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-title {
+        font-size: 1.25rem;
+    }
+    
+    .event-stats .row {
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .modal-gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* Animation for modal appearance */
+.modal.fade .modal-dialog {
+    transform: scale(0.8) translateY(-50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1) translateY(0);
+}
+    </style>
+</head>
+<body>
+    <!-- Audio Background -->
+    <div class="audio-bg">
+        <div class="audio-bars">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-volume-up me-2"></i>
+                Shon the Sound Guy
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#equipment">Equipment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#portfolio">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="hero-content fade-in">
+			<div class="hero-image mb-4">
+                            <img src="Logo.png" class="img-fluid crowd-image">
+                        </div>
+                        <h1>Live Event Audio Excellence</h1>
+                        <p class="lead">Professional live sound engineering for weddings, festivals, corporate events, and performances of all sizes. Crystal-clear audio that brings your event to life.</p>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="#services" class="btn btn-primary">
+                                <i class="fas fa-play me-2"></i>Our Services
+                            </a>
+                            <a href="#contact" class="btn btn-outline-primary">
+                                <i class="fas fa-calendar me-2"></i>Book Event
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="waveform">
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="color: var(--primary-color);">Live Event Services</h2>
+                <p class="lead">Professional audio solutions for every type of live event</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-music service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Concert Sound</h4>
+                        <p>Full-scale concert audio production with front-of-house mixing, monitor systems, and professional PA systems for any venue size.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Front-of-house mixing</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Monitor systems</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Full PA systems</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-calendar-alt service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Festival Audio</h4>
+                        <p>Large-scale festival sound production with multiple stages, artist management, and seamless transitions between performances.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Multi-stage coordination</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Artist liaison</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Stage management</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-building service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Corporate Events</h4>
+                        <p>Professional audio for corporate meetings, presentations, conferences, and networking events with wireless mic systems and recording.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Wireless microphones</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Presentation audio</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Event recording</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-heart service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Wedding Audio</h4>
+                        <p>Elegant audio solutions for ceremonies and receptions, including wireless mics, background music, and DJ sound systems.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Ceremony sound</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Reception audio</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Wireless solutions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-theater-masks service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">Theater & Performances</h4>
+                        <p>Specialized audio for theatrical productions, dance performances, and live shows with body mics and effects processing.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Body microphones</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Sound effects</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Show control</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card fade-in">
+                        <i class="fas fa-graduation-cap service-icon"></i>
+                        <h4 class="mb-3" style="color: var(--primary-color);">School & Community Events</h4>
+                        <p>Affordable audio solutions for graduations, school performances, community gatherings, and fundraising events.</p>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="fas fa-check text-success me-2"></i>Graduation ceremonies</li>
+                            <li><i class="fas fa-check text-success me-2"></i>School productions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Community events</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipment Section -->
+    <section id="equipment" class="equipment">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="color: var(--primary-color);">Professional Live Equipment</h2>
+                <p class="lead">Industry-leading gear for exceptional live sound quality</p>
+            </div>
+            
+            <div class="equipment-grid">
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-volume-up display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">PA Systems</h5>
+                    <p>Line Array systems, powered speakers, and subwoofers from JBL, d&b audiotechnik, and Meyer Sound</p>
+                </div>
+                
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-sliders-h display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">Digital Mixing Consoles</h5>
+                    <p>Yamaha CL5, Midas M32, Allen & Heath dLive - Professional digital mixing boards for any event size</p>
+                </div>
+                
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-microphone display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">Wireless Microphone Systems</h5>
+                    <p>Shure Axient Digital, Sennheiser EW-DX - Professional wireless systems with extended range</p>
+                </div>
+                
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-headphones display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">Monitor Systems</h5>
+                    <p>In-ear monitors, floor wedges, and personal monitoring systems for crystal-clear stage sound</p>
+                </div>
+                
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-bolt display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">Power & Processing</h5>
+                    <p>Crown amplifiers, Lake processing, and power distribution for reliable, clean power delivery</p>
+                </div>
+                
+                <div class="equipment-item fade-in">
+                    <i class="fas fa-truck display-4 mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="mb-3">Mobile Setup</h5>
+                    <p>Complete mobile audio rigs with staging, lighting integration, and weather protection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="color: var(--primary-color);">Recent Live Events</h2>
+                <p class="lead">Check out some of our latest live event productions</p>
+            </div>
+            
+            <div class="row">
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="portfolio-item fade-in">
+                        <i class="fas fa-building display-2" style="color: var(--primary-color);"></i>
+                        <div class="portfolio-overlay">
+                            <h5>Corporate Conference</h5>
+                            <p>Tech Summit 2024 - 2,000 Delegates</p>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#corporateModal">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="portfolio-item fade-in">
+                        <i class="fas fa-heart display-2" style="color: var(--primary-color);"></i>
+                        <div class="portfolio-overlay">
+                            <h5>Wedding Reception</h5>
+                            <p>Garden Wedding - 300 Guests</p>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#weddingModal">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="portfolio-item fade-in">
+                        <i class="fas fa-theater-masks display-2" style="color: var(--primary-color);"></i>
+                        <div class="portfolio-overlay">
+                            <h5>Theater Production</h5>
+                            <p>"Hamilton" Local Production - 800 Seats</p>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#theaterModal">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="color: var(--primary-color);">Book Your Event</h2>
+                <p class="lead">Ready to make your event sound amazing? Let's discuss your live audio needs!</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="contact-form fade-in">
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Your Name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" placeholder="Your Email" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="tel" class="form-control" placeholder="Phone Number">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" required>
+                                        <option value="">Select Event Type</option>
+                                        <option value="concert">Concert/Music Event</option>
+                                        <option value="festival">Festival/Outdoor Event</option>
+                                        <option value="corporate">Corporate Event</option>
+                                        <option value="wedding">Wedding/Reception</option>
+                                        <option value="theater">Theater/Performance</option>
+                                        <option value="school">School/Community Event</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" placeholder="Event Date" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" placeholder="Expected Attendance" min="1">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Event Location/Venue">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="5" placeholder="Tell us about your event, equipment needs, and any special requirements..." required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-calendar-check me-2"></i>Request Quote
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="contact-info mt-5 mt-lg-0 fade-in">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-map-marker-alt fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div>
+                                <h5>Service Area</h5>
+                                <p class="mb-0">Portland & Surrounding Areas<br>Oregon</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-phone fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div>
+                                <h5>Phone</h5>
+                                <p class="mb-0">(541) 852-0926</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-envelope fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div>
+                                <h5>Email</h5>
+                                <p class="mb-0">shonthesoundguy@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-clock fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div>
+                                <h5>Availability</h5>
+                                <p class="mb-0">24/7 Event Support<br>Response within 2 hours</p>
+                            </div>
+                        </div>
+                        
+                        <div class="social-links mt-4">
+                            <h5 class="mb-3">Follow Us</h5>
+                            <div class="d-flex gap-3">
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                                <a href="https://www.facebook.com/p/Shon-the-Sound-guy-61572300428732/" class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h4 class="mb-3" style="color: var(--primary-color);">
+                        <i class="fas fa-volume-up me-2"></i>Shon the Sound Guy
+                    </h4>
+                    <p>Professional live event audio engineering services for concerts, festivals, corporate events, weddings, and performances across Nevada and beyond.</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="text-light fs-4"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="text-light fs-4"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="mb-3" style="color: var(--primary-color);">Event Types</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Concerts</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Festivals</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Corporate</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Weddings</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Theater</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="mb-3" style="color: var(--primary-color);">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#services" class="text-light text-decoration-none">Services</a></li>
+                        <li><a href="#equipment" class="text-light text-decoration-none">Equipment</a></li>
+                        <li><a href="#portfolio" class="text-light text-decoration-none">Events</a></li>
+                        <li><a href="#contact" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3" style="color: var(--primary-color);">Event Updates</h5>
+                    <p>Get notifications about upcoming events and live audio tips.</p>
+                    <form class="d-flex">
+                        <input type="email" class="form-control me-2" placeholder="Your email" style="background: rgba(26,26,26,0.8); border-color: var(--primary-color);">
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </form>
+
+                </div>
+            </div>
+            
+            <hr style="border-color: rgba(33, 150, 243, 0.3);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 Shon the Sound Guy - Live Event Audio. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Portfolio Modals -->
+
+    <!-- Corporate Conference Modal -->
+    <div class="modal fade" id="corporateModal" tabindex="-1" aria-labelledby="corporateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="corporateModalLabel">
+                        <i class="fas fa-building me-2"></i>Tech Summit 2024 Conference
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h6 class="text-primary mb-3">Event Overview</h6>
+                            <p>Major technology conference with keynote presentations, breakout sessions, and networking events. Required seamless audio for presentations, Q&A sessions, and live streaming capabilities.</p>
+                            
+                            <div class="event-stats">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">2</div>
+                                            <div class="stat-label">Days</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">2,000</div>
+                                            <div class="stat-label">Delegates</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">15</div>
+                                            <div class="stat-label">Speakers</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">5</div>
+                                            <div class="stat-label">Rooms</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-primary mb-3">Corporate Audio Solutions</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Multi-room audio distribution</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Live streaming audio feeds</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Wireless presentation microphones</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Q&A audience mic systems</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Recording and archival services</li>
+                            </ul>
+
+                            <div class="testimonial-box">
+                                "Exceptional professionalism and technical expertise. Every presentation was crystal clear, and the seamless transitions between speakers made our conference run like clockwork."
+                                <div class="testimonial-author">- Michael Chen, Event Coordinator</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-microphone me-2"></i>Presentation Audio</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Sennheiser wireless lavaliers</li>
+                                    <li>• Allen & Heath dLive systems</li>
+                                    <li>• QSC K-Series speakers</li>
+                                    <li>• Dante audio networking</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-broadcast-tower me-2"></i>Streaming & Recording</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Multi-track recording setup</li>
+                                    <li>• Live stream audio feeds</li>
+                                    <li>• Backup recording systems</li>
+                                    <li>• Post-event audio mastering</li>
+                                </ul>
+                            </div>
+
+                            <div class="modal-gallery">
+                                <div class="gallery-item">
+                                    <i class="fas fa-desktop"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-microphone"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Request Corporate Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wedding Reception Modal -->
+    <div class="modal fade" id="weddingModal" tabindex="-1" aria-labelledby="weddingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="weddingModalLabel">
+                        <i class="fas fa-heart me-2"></i>Garden Wedding & Reception
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h6 class="text-primary mb-3">Event Overview</h6>
+                            <p>Elegant outdoor wedding ceremony and reception featuring ceremony music, cocktail hour background audio, dinner announcements, and dance floor sound system with DJ integration.</p>
+                            
+                            <div class="event-stats">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">1</div>
+                                            <div class="stat-label">Perfect Day</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">300</div>
+                                            <div class="stat-label">Guests</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">8</div>
+                                            <div class="stat-label">Hours</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">100%</div>
+                                            <div class="stat-label">Happy</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-primary mb-3">Wedding Audio Services</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Ceremony processional and recessional music</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Wireless microphones for officiant and vows</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Cocktail hour background music system</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Reception announcements and toasts</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Dance floor sound system and lighting</li>
+                            </ul>
+
+                            <div class="testimonial-box">
+                                "Shon made our wedding day absolutely perfect! The ceremony music was beautiful, everyone could hear our vows clearly, and the reception sound was amazing. So professional and stress-free!"
+                                <div class="testimonial-author">- Jessica & David Thompson</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-church me-2"></i>Ceremony Setup</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Discrete wireless microphones</li>
+                                    <li>• Weather-resistant speakers</li>
+                                    <li>• Music playback system</li>
+                                    <li>• Battery-powered operation</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-glass-cheers me-2"></i>Reception Audio</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Full range PA system</li>
+                                    <li>• DJ mixer integration</li>
+                                    <li>• Wireless mic for toasts</li>
+                                    <li>• Dance floor subwoofers</li>
+                                </ul>
+                            </div>
+
+                            <div class="modal-gallery">
+                                <div class="gallery-item">
+                                    <i class="fas fa-rings-wedding"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-champagne-glasses"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Request Wedding Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theater Production Modal -->
+    <div class="modal fade" id="theaterModal" tabindex="-1" aria-labelledby="theaterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="theaterModalLabel">
+                        <i class="fas fa-theater-masks me-2"></i>Hamilton Local Production
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h6 class="text-primary mb-3">Production Overview</h6>
+                            <p>Full theatrical production of Hamilton with complex character mic plots, musical accompaniment, and sophisticated sound effects. Required precise timing and flawless wireless coordination.</p>
+                            
+                            <div class="event-stats">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">25</div>
+                                            <div class="stat-label">Performances</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">800</div>
+                                            <div class="stat-label">Seat Theater</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">24</div>
+                                            <div class="stat-label">Body Mics</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stat-item">
+                                            <div class="stat-number">12</div>
+                                            <div class="stat-label">Musicians</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-primary mb-3">Theater Audio Challenges</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success me-2"></i>24-channel wireless body mic coordination</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Live orchestra and vocal balance</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Scene-change automation and effects</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Costume-integrated microphone concealment</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>Backup systems for critical performances</li>
+                            </ul>
+
+                            <div class="testimonial-box">
+                                "Working with Shon on Hamilton was incredible. The audio was flawless every night, and the technical expertise made our production shine. Every word was crystal clear!"
+                                <div class="testimonial-author">- Rebecca Foster, Theater Director</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-microphone me-2"></i>Wireless Systems</h6>
+                                <ul class="list-unstyled">
+                                    <li>• 24x Shure Axient Digital</li>
+                                    <li>• DPA d:fine headset mics</li>
+                                    <li>• RF coordination & monitoring</li>
+                                    <li>• Backup transmitter systems</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="equipment-list">
+                                <h6><i class="fas fa-music me-2"></i>Orchestra & Playback</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Digital mixing console</li>
+                                    <li>• Orchestra pit microphones</li>
+                                    <li>• QLab playback system</li>
+                                    <li>• Sound effects library</li>
+                                </ul>
+                            </div>
+
+                            <div class="modal-gallery">
+                                <div class="gallery-item">
+                                    <i class="fas fa-theater-masks"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-microphone-alt"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="gallery-item">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Request Theater Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+         
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animated');
+                }
+            });
+        };
+
+        // Initialize animations
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+
+        // Contact form handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending Quote Request...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                // Show success message
+                showNotification('Quote request sent successfully! We\'ll contact you within 2 hours to discuss your event.', 'success');
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+
+        // Newsletter form handling
+        document.querySelector('.footer form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            
+            if (email) {
+                showNotification('Successfully subscribed to event updates!', 'success');
+                this.querySelector('input[type="email"]').value = '';
+            } else {
+                showNotification('Please enter a valid email address.', 'danger');
+            }
+        });
+
+        // Notification system
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+            notification.style.zIndex = '9999';
+            notification.style.maxWidth = '400px';
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Dynamic audio bars animation
+        document.querySelectorAll('.bar').forEach((bar, index) => {
+            bar.style.animationDelay = `${index * 0.1}s`;
+            bar.style.height = `${Math.random() * 60 + 20}px`;
+            
+            setInterval(() => {
+                bar.style.height = `${Math.random() * 60 + 20}px`;
+            }, 2000 + Math.random() * 1000);
+        });
+
+        // Navbar background change on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(13, 13, 13, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(13, 13, 13, 0.95)';
+            }
+        });
+
+        // Portfolio item interactions
+        document.querySelectorAll('.portfolio-item').forEach(item => {
+            const overlay = item.querySelector('.portfolio-overlay');
+            const button = overlay ? overlay.querySelector('button') : null;
+            
+            if (button) {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const projectType = this.parentElement.querySelector('h5').textContent;
+                    //showNotification(`Loading details for ${projectType}...`, 'info');
+                });
+            }
+        });
+
+        // Add hover sound effect simulation for service cards
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trigger initial animation check
+            animateOnScroll();
+            
+            // Add staggered animation delays
+            document.querySelectorAll('.fade-in').forEach((element, index) => {
+                element.style.transitionDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Add typing effect to hero text
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize typing effect after a delay
+        setTimeout(() => {
+            const heroText = document.querySelector('.hero .lead');
+            if (heroText) {
+                const originalText = heroText.textContent;
+                typeWriter(heroText, originalText, 30);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
